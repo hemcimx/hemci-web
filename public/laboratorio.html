@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio Clínico — HEMCI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  /* =======================================================
+     Variables — IDÉNTICAS al sitio HEMCI
+     ======================================================= */
+  :root{
+    --blue-900:#04357a;
+    --blue-800:#0454b3;
+    --blue-700:#0268E9;
+    --blue-500:#4a95f2;
+    --blue-200:#c7e0ff;
+    --blue-100:#eaf3ff;
+    --blue-50:#f5f9ff;
+    --paper:#ffffff;
+    --ink:#0c1c33;
+    --ink-dim:#4a5a75;
+    --ink-faint:#8393b0;
+    --line:#dde6f5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  ::selection{background:var(--blue-200);color:var(--blue-900);}
+  img{display:block; max-width:100%;}
+
+  /* ---------- Nav (estándar del sitio) ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 5vw;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo-mark{ display:flex; align-items:center; gap:12px; text-decoration:none; }
+  .logo-mark img{ height:44px; width:44px; border-radius:50%; }
+  .logo-mark .logo-text{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; line-height:1.15; color:var(--ink); }
+  .logo-mark .logo-text span{ display:block; font-size:10.5px; font-weight:500; color:var(--ink-faint); letter-spacing:0.04em; text-transform:uppercase; }
+  .nav-links{ display:flex; align-items:center; gap:28px; }
+  .nav-links a:not(.cta){ color:var(--ink-dim); text-decoration:none; font-size:14px; font-weight:500; transition:color 0.2s ease; }
+  .nav-links a:not(.cta):hover{ color:var(--blue-700); }
+  nav a.cta{
+    color:#fff; text-decoration:none; font-size:14px; font-weight:600; font-family:'Space Grotesk',sans-serif;
+    background:var(--blue-700); padding:11px 22px; border-radius:8px;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  nav a.cta:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(2,104,233,0.3); }
+  .nav-toggle{
+    display:none; flex-direction:column; justify-content:center; align-items:center; gap:5px;
+    width:40px; height:40px; background:transparent; border:1px solid var(--line); border-radius:8px;
+    cursor:pointer; padding:0; flex-shrink:0;
+  }
+  .nav-toggle span{ display:block; width:20px; height:2px; background:var(--blue-900); border-radius:2px; transition:transform .25s ease, opacity .25s ease; }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+  .nav-mobile-panel{
+    display:none; flex-direction:column; position:fixed; top:76px; left:0; right:0;
+    background:#fff; border-bottom:1px solid var(--line); box-shadow:0 16px 30px -18px rgba(4,53,122,0.28);
+    padding:.4rem 6vw 1.3rem; z-index:99; max-height:calc(100vh - 76px); overflow-y:auto;
+  }
+  .nav-mobile-panel a{ padding:.9rem 0; font-size:1rem; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+  .nav-mobile-panel a.cta{ border-bottom:none; margin-top:.9rem; text-align:center; color:#fff; background:var(--blue-700); border-radius:8px; font-family:'Space Grotesk',sans-serif; font-weight:600; }
+  .nav-mobile-panel.is-open{ display:flex; }
+  @media (max-width:760px){ .nav-toggle{ display:flex; } .nav-links{ display:none !important; } }
+
+  /* ---------- Botones (mismas clases del sitio) ---------- */
+  .btn{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; padding:14px 28px; border-radius:8px; text-decoration:none; transition:transform 0.2s ease, box-shadow 0.2s ease; display:inline-block; border:none; cursor:pointer; }
+  .btn-primary{ background:var(--blue-700); color:#fff; }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 28px rgba(2,104,233,0.32); }
+  .btn-ghost{ border:1px solid var(--line); color:var(--ink); background:#fff; }
+  .btn-ghost:hover{ border-color:var(--blue-700); transform:translateY(-2px); }
+  .btn-white{ background:#fff; color:var(--blue-900); }
+  .btn-white:hover{ transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,0.22); }
+
+  .eyebrow-label{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue-700); display:inline-flex; align-items:center; gap:8px; margin-bottom:16px; }
+  .eyebrow-label::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--blue-700); flex-shrink:0; }
+  .eyebrow-label.light{ color:var(--blue-500); }
+  .eyebrow-label.light::before{ background:var(--blue-500); }
+
+  /* =======================================================
+     1. HERO — split asimétrico con formas orgánicas
+     ======================================================= */
+  .split-hero{
+    position:relative; overflow:hidden;
+    padding:150px 5vw 90px;
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:60px; align-items:center;
+  }
+  .hero-field{
+    position:absolute; inset:-10% -5%; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(var(--blue-100) 1px, transparent 1px),
+      linear-gradient(90deg, var(--blue-100) 1px, transparent 1px);
+    background-size:56px 56px;
+    -webkit-mask-image:radial-gradient(ellipse 60% 55% at 26% 22%, #000 0%, transparent 72%);
+    mask-image:radial-gradient(ellipse 60% 55% at 26% 22%, #000 0%, transparent 72%);
+  }
+  .split-hero-text{ position:relative; z-index:1; }
+  .split-hero-text h1{
+    font-size:clamp(2.4rem, 4.6vw, 4rem); font-weight:700; letter-spacing:-0.02em; line-height:1.06;
+    color:var(--blue-900); margin-bottom:18px;
+  }
+  .split-hero-text p{ color:var(--ink-dim); font-size:16.5px; line-height:1.7; max-width:460px; margin-bottom:34px; }
+  .split-hero-actions{ display:flex; gap:14px; flex-wrap:wrap; }
+
+  .hero-trust{ display:flex; flex-wrap:wrap; gap:10px 24px; margin-top:30px; }
+  .trust-item{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-dim); }
+  .trust-item svg{ width:16px; height:16px; flex-shrink:0; color:var(--blue-700); }
+
+  .hero-visual{ position:relative; z-index:1; }
+
+  .lab-wrap{ position:relative; width:78%; max-width:460px; }
+  .lab-viewer{
+    position:relative; width:100%; aspect-ratio:1/1.08;
+    border-radius:22px; overflow:hidden;
+    background:linear-gradient(172deg,var(--blue-900) 0%,#04214f 60%,var(--ink) 130%);
+    box-shadow:0 30px 70px -22px rgba(4,53,122,0.45);
+    display:flex; flex-direction:column;
+  }
+  .lab-viewer-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 18px; background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.09);
+    flex-shrink:0;
+  }
+  .lab-dots{ display:flex; gap:6px; flex-shrink:0; }
+  .lab-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.25); }
+  .lab-viewer-label{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,0.5); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .lab-viewer-screen{ position:relative; flex:1; overflow:hidden; }
+  .lab-illustration{ position:absolute; inset:0; width:100%; height:100%; }
+
+  .scan-line{
+    position:absolute; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--blue-500) 40%,#fff 50%,var(--blue-500) 60%,transparent);
+    box-shadow:0 0 18px 3px rgba(74,149,242,.65);
+    animation:scanmove 3.8s ease-in-out infinite;
+  }
+  @keyframes scanmove{
+    0%,100%{ top:10%; opacity:.15; }
+    50%{ top:88%; opacity:.85; }
+  }
+  @media (prefers-reduced-motion: reduce){ .scan-line{ animation:none; top:50%; opacity:.5; } }
+
+  .diag-reticle{ position:absolute; width:20px; height:20px; border:1px solid rgba(255,255,255,.28); }
+  .diag-reticle.tl{ top:16px; left:16px; border-right:none; border-bottom:none; }
+  .diag-reticle.br{ bottom:16px; right:16px; border-left:none; border-top:none; }
+
+  .diag-tag{ position:absolute; font-size:10px; letter-spacing:.07em; color:rgba(255,255,255,.55); line-height:1.4; }
+  .diag-tag.tag-tl{ top:22px; left:44px; }
+  .diag-tag.tag-br{ bottom:22px; right:44px; text-align:right; }
+
+  .float-card{
+    position:absolute; right:-18px; bottom:-8%; width:210px;
+    background:#fff; border:1px solid var(--line); border-radius:18px; padding:20px 22px;
+    box-shadow:0 22px 44px -16px rgba(4,53,122,0.28);
+  }
+  .float-card .fc-icon{ width:36px; height:36px; border-radius:10px; background:var(--blue-100); border:1px solid var(--blue-200); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .float-card .fc-label{ font-size:13px; color:var(--ink-dim); line-height:1.5; }
+  .float-card .fc-label strong{ display:block; color:var(--blue-900); font-family:'Space Grotesk',sans-serif; font-size:14.5px; margin-bottom:2px; }
+
+  /* =======================================================
+     2. PROCESO — sección oscura con corte diagonal, zigzag
+     ======================================================= */
+  .process{
+    position:relative; background:var(--blue-900); color:#fff;
+    padding:130px 5vw 100px; margin-top:-46px;
+    clip-path: polygon(0 46px, 100% 0, 100% 100%, 0 100%);
+  }
+  .process-head{ max-width:600px; }
+  .process-head h2{ font-size:clamp(1.9rem,3.2vw,2.6rem); font-weight:600; letter-spacing:-0.01em; line-height:1.2; }
+  .process-head p{ margin-top:14px; color:rgba(255,255,255,0.7); font-size:15.5px; line-height:1.7; }
+  .process-steps{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:26px;
+    margin-top:64px; position:relative;
+  }
+  .process-steps::before{ content:''; position:absolute; top:34px; left:0; right:0; height:1px; background:rgba(255,255,255,0.15); }
+  .step{ position:relative; }
+  .step:nth-child(2){ margin-top:46px; }
+  .step:nth-child(4){ margin-top:46px; }
+  .step-num{
+    position:relative; z-index:1; width:68px; height:68px; border-radius:50%;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.28);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; margin-bottom:24px;
+  }
+  .step h4{ font-size:16.5px; font-weight:600; margin-bottom:8px; }
+  .step p{ font-size:13.5px; color:rgba(255,255,255,0.62); line-height:1.6; }
+
+  /* =======================================================
+     3. BENTO — catálogo de estudios en mosaico irregular
+     ======================================================= */
+  .bento-wrap{ padding:110px 5vw 100px; background:var(--paper); }
+  .bento-head{ max-width:620px; margin-bottom:56px; }
+  .bento-head h2{ font-size:clamp(1.8rem, 3.2vw, 2.6rem); font-weight:600; color:var(--blue-900); letter-spacing:-0.01em; line-height:1.15; }
+  .bento-head p{ margin-top:16px; color:var(--ink-dim); font-size:16px; line-height:1.7; }
+
+  .bento-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:180px;
+    grid-auto-flow:row dense; gap:18px;
+  }
+  .bento-item{
+    position:relative; overflow:hidden;
+    background:#fff; border:1px solid var(--line); border-radius:20px;
+    padding:26px; display:flex; flex-direction:column; justify-content:flex-end;
+    transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .bento-item:hover{ transform:translateY(-5px); border-color:var(--blue-500); box-shadow:0 18px 36px rgba(2,104,233,0.14); }
+  .bento-item .b-icon{ width:44px; height:44px; border-radius:12px; background:var(--blue-100); border:1px solid var(--blue-200); display:flex; align-items:center; justify-content:center; margin-bottom:auto; }
+  .bento-item h3{ font-size:16.5px; font-weight:600; color:var(--blue-900); margin-top:16px; }
+  .bento-item p{ margin-top:6px; color:var(--ink-dim); font-size:13.5px; line-height:1.55; }
+  .bento-item .b-tag{ position:absolute; top:22px; right:22px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; color:var(--ink-faint); }
+
+  .bento-item.feature{ grid-column:span 2; grid-row:span 2; background:linear-gradient(155deg,var(--blue-900),var(--blue-700)); border:none; }
+  .bento-item.feature .b-icon{ background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.3); }
+  .bento-item.feature h3{ color:#fff; font-size:23px; }
+  .bento-item.feature p{ color:rgba(255,255,255,0.78); font-size:14.5px; max-width:320px; }
+  .bento-item.feature .b-tag{ color:rgba(255,255,255,0.65); }
+
+  .bento-item.wide{ grid-column:span 2; }
+
+  .bento-item.cta-tile{
+    background:var(--blue-50); border:1px dashed var(--blue-200);
+    align-items:flex-start; justify-content:center;
+  }
+  .bento-item.cta-tile a{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; color:var(--blue-700);
+    text-decoration:none; display:inline-flex; align-items:center; gap:8px; font-size:15px;
+  }
+  .bento-item.cta-tile span{ display:block; color:var(--ink-faint); font-size:12.5px; margin-top:8px; }
+
+  /* =======================================================
+     3b. CONSTRUCTOR DE ORDEN — catálogo seleccionable
+     ======================================================= */
+  .order-wrap{ padding:20px 5vw 100px; background:var(--paper); }
+  .order-grid{ display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start; }
+
+  .study-categories{ display:flex; flex-direction:column; gap:14px; }
+  .cat-group{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; }
+  .cat-group summary{
+    list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+    padding:18px 20px; font-family:'Space Grotesk',sans-serif; font-weight:600; color:var(--blue-900); font-size:15.5px;
+  }
+  .cat-group summary::-webkit-details-marker{ display:none; }
+  .cat-group summary .cat-meta{ display:flex; align-items:center; gap:12px; flex-shrink:0; }
+  .cat-group summary .cat-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--blue-700);
+    background:var(--blue-50); border:1px solid var(--blue-200); padding:3px 10px; border-radius:100px; white-space:nowrap;
+  }
+  .cat-group summary .chev{
+    width:26px; height:26px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; transition:transform .2s ease, border-color .2s ease; flex-shrink:0;
+  }
+  .cat-group[open] summary .chev{ transform:rotate(45deg); border-color:var(--blue-700); }
+  .cat-body{ padding:2px 20px 16px; display:flex; flex-direction:column; }
+  .study-check{ display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-top:1px solid var(--blue-50); cursor:pointer; }
+  .study-check:first-child{ border-top:none; }
+  .study-check input{ margin-top:3px; width:17px; height:17px; accent-color:var(--blue-700); flex-shrink:0; cursor:pointer; }
+  .study-check .label{ font-size:14px; color:var(--ink); line-height:1.5; }
+  .study-check .label small{ display:block; color:var(--ink-faint); font-size:12px; margin-top:3px; line-height:1.5; }
+
+  .order-summary{
+    position:sticky; top:96px; border:1px solid var(--line); border-radius:16px;
+    padding:24px 22px; background:var(--blue-50);
+  }
+  .order-summary h3{ font-size:16.5px; color:var(--blue-900); margin-bottom:4px; }
+  .order-summary .summary-count{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-dim); margin-bottom:14px; }
+  .order-summary .summary-count b{ color:var(--blue-700); }
+  .selected-list{ list-style:none; display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; margin-bottom:18px; padding-right:2px; }
+  .selected-list li{
+    font-size:12.5px; color:var(--ink-dim); display:flex; justify-content:space-between; align-items:center; gap:8px;
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:7px 10px;
+  }
+  .selected-list li button{ border:none; background:none; color:var(--ink-faint); cursor:pointer; font-size:15px; line-height:1; flex-shrink:0; }
+  .selected-list li button:hover{ color:var(--blue-700); }
+  .selected-list:empty::before{ content:'Aún no seleccionas estudios.'; font-size:12.5px; color:var(--ink-faint); }
+  .order-summary .btn{ width:100%; text-align:center; }
+  .order-summary .btn[disabled]{ opacity:.5; cursor:not-allowed; }
+  .order-summary .btn[disabled]:hover{ transform:none; box-shadow:none; }
+  .more-studies-link{
+    display:flex; flex-direction:column; gap:2px; margin-top:16px; padding-top:16px;
+    border-top:1px dashed var(--blue-200); text-decoration:none; font-size:12.5px; color:var(--ink-dim);
+  }
+  .more-studies-link strong{ color:var(--blue-700); font-family:'Space Grotesk',sans-serif; display:flex; align-items:center; gap:6px; font-size:13.5px; }
+
+  /* ---------- Modal: datos del solicitante ---------- */
+  .order-modal{ position:fixed; inset:0; z-index:300; display:none; align-items:center; justify-content:center; padding:24px; }
+  .order-modal.is-open{ display:flex; }
+  .order-modal-backdrop{ position:absolute; inset:0; background:rgba(4,53,122,0.55); backdrop-filter:blur(2px); }
+  .order-modal-panel{
+    position:relative; background:#fff; border-radius:20px; width:min(560px,100%);
+    max-height:88vh; overflow-y:auto; padding:32px 30px;
+    box-shadow:0 40px 80px -20px rgba(4,53,122,.5);
+  }
+  .order-modal-close{
+    position:absolute; top:18px; right:18px; width:32px; height:32px; border-radius:50%;
+    border:1px solid var(--line); background:#fff; cursor:pointer; font-size:15px; color:var(--ink-dim);
+  }
+  .order-modal-panel h3{ font-size:20px; color:var(--blue-900); margin-bottom:6px; }
+  .order-modal-panel > p.modal-sub{ color:var(--ink-dim); font-size:13.5px; margin-bottom:22px; }
+  #orderForm label{ display:block; font-size:13px; font-weight:600; color:var(--blue-900); margin-bottom:16px; }
+  #orderForm input, #orderForm select, #orderForm textarea{
+    display:block; width:100%; margin-top:6px; padding:11px 12px; border:1px solid var(--line);
+    border-radius:8px; font-family:'Inter',sans-serif; font-size:14px; color:var(--ink); background:#fff;
+  }
+  #orderForm textarea{ resize:vertical; min-height:64px; }
+  #orderForm input:focus, #orderForm select:focus, #orderForm textarea:focus{
+    outline:none; border-color:var(--blue-700); box-shadow:0 0 0 3px rgba(2,104,233,0.12);
+  }
+  .checkbox-inline{
+    display:flex !important; align-items:center; gap:13px; font-weight:500 !important;
+    background:none; border:none; padding:6px 0; margin-bottom:0 !important; cursor:pointer; width:auto;
+  }
+  .checkbox-inline input{ position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
+  .checkbox-inline .check-box{
+    width:25px; height:25px; border-radius:8px; border:2px solid var(--blue-200);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#fff;
+    transition:border-color .15s ease;
+  }
+  .checkbox-inline .check-box svg{ opacity:0; transform:scale(.7); transition:opacity .12s ease, transform .12s ease; }
+  .checkbox-inline input:checked + .check-box{ border-color:var(--blue-700); }
+  .checkbox-inline input:checked + .check-box svg{ opacity:1; transform:scale(1); }
+  .checkbox-inline input:focus-visible + .check-box{ box-shadow:0 0 0 3px rgba(2,104,233,.22); }
+  .checkbox-inline .check-label{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; color:var(--blue-900); }
+  .checkbox-hint{ display:block; font-size:11.5px; font-weight:400 !important; color:var(--ink-faint) !important; margin:2px 0 18px 38px; }
+
+  .entrega-question{ font-size:13px; font-weight:600; color:var(--blue-900); margin-bottom:12px; }
+  .entrega-options{ display:flex; flex-direction:column; gap:6px; margin-bottom:6px; }
+  .entrega-options .checkbox-inline{ width:100%; }
+  .entrega-extra{ margin-top:10px; }
+  .entrega-extra label{ margin-bottom:12px; }
+
+  .dob-fields{ display:grid; grid-template-columns:74px 1.3fr 92px; gap:8px; margin-top:6px; }
+  .dob-fields select{ margin-top:0; padding:11px 8px; }
+  @media (max-width:380px){
+    .dob-fields{ grid-template-columns:1fr; }
+  }
+
+  .order-modal-actions .btn{ width:100%; text-align:center; }
+  #pdfReadyBox{ text-align:center; padding-top:4px; }
+  #pdfReadyBox p{ color:var(--ink-dim); font-size:14px; margin-bottom:16px; }
+  #pdfReadyBox .btn{ width:100%; text-align:center; margin-bottom:12px; }
+  #pdfReadyBox .wa-note{ font-size:12px; color:var(--ink-faint); margin-top:2px; margin-bottom:0; }
+
+  @media (max-width:900px){
+    .order-grid{ grid-template-columns:1fr; }
+    .order-summary{ position:static; }
+  }
+
+  /* =======================================================
+     4. FRANJA de atributos
+     ======================================================= */
+  .attr-band{
+    background:var(--blue-50); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:56px 5vw; display:grid; grid-template-columns:repeat(3,1fr);
+  }
+  .attr{ display:flex; align-items:center; gap:16px; padding:0 24px; border-right:1px solid var(--line); }
+  .attr:last-child{ border-right:none; }
+  .attr .a-icon{ width:48px; height:48px; border-radius:50%; background:#fff; border:1px solid var(--blue-200); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .attr .a-text strong{ display:block; font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--blue-900); }
+  .attr .a-text span{ display:block; font-size:12.5px; color:var(--ink-dim); margin-top:2px; }
+
+  /* =======================================================
+     5. CTA final
+     ======================================================= */
+  .cta-band{
+    background:var(--blue-900); color:#fff; text-align:center;
+    padding:96px 5vw; position:relative;
+  }
+  .cta-band h2{ font-size:clamp(1.9rem,3.4vw,2.7rem); font-weight:600; margin-bottom:16px; }
+  .cta-band p{ color:rgba(255,255,255,0.72); max-width:480px; margin:0 auto 30px; font-size:15.5px; line-height:1.7; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line); padding:28px 5vw;
+    display:flex; justify-content:space-between; align-items:center;
+    color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; font-size:12px;
+  }
+  .credit-bar{
+    padding:14px 5vw 28px;
+    display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:8px;
+    color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; font-size:11px;
+    border-top:1px solid var(--line);
+  }
+  .credit-bar a{
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--ink-dim); text-decoration:none; font-weight:600;
+    transition:color .2s ease;
+  }
+  .credit-bar a:hover{ color:var(--blue-700); }
+  .credit-bar svg{ width:13px; height:13px; flex-shrink:0; }
+  .credit-divider{ opacity:.5; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1000px){
+    .split-hero{ grid-template-columns:1fr; }
+    .lab-wrap{ width:100%; max-width:340px; margin:0 auto; }
+    .process-steps{ grid-template-columns:repeat(2,1fr); }
+    .step:nth-child(2), .step:nth-child(4){ margin-top:0; }
+    .process-steps::before{ display:none; }
+    .attr-band{ grid-template-columns:1fr; gap:24px; }
+    .attr{ border-right:none; border-bottom:1px solid var(--line); padding-bottom:24px; }
+    .attr:last-child{ border-bottom:none; padding-bottom:0; }
+  }
+  @media (max-width:900px){
+    .bento-grid{ grid-template-columns:repeat(2,1fr); }
+    .bento-item.feature{ grid-column:span 2; grid-row:span 1; min-height:260px; }
+    .bento-item.wide{ grid-column:span 2; }
+  }
+  @media (max-width:480px){
+    .logo-mark .logo-text{ display:none; }
+  }
+  @media (max-width:560px){
+    section, .split-hero, .process, .bento-wrap, .cta-band{ padding-left:6vw; padding-right:6vw; }
+    footer{ flex-direction:column; gap:8px; text-align:center; }
+    .split-hero{ padding-top:110px; }
+    .process{ clip-path:none; margin-top:0; padding-top:80px; }
+    .process-steps{ grid-template-columns:1fr; }
+    .bento-grid{ grid-template-columns:1fr; grid-auto-rows:auto; }
+    .bento-item.feature, .bento-item.wide{ grid-column:span 1; }
+    .bento-item{ min-height:170px; }
+  }
+
+  /* ---------- WhatsApp widget flotante (estándar del sitio) ---------- */
+  .wa-widget{ position:fixed; top:70%; right:0; transform:translateY(-50%); z-index:200; display:flex; align-items:center; }
+  .wa-tab{ display:flex; flex-direction:column; align-items:center; gap:.55rem; background:#25D366; color:#fff; border:none; border-radius:14px 0 0 14px; padding:1.1rem .7rem; cursor:pointer; box-shadow:-8px 8px 26px -10px rgba(4,53,122,.4); transition:background .2s ease, padding .2s ease, transform .2s ease; }
+  .wa-tab:hover{ background:#1fbd5a; padding-right:.95rem; }
+  .wa-tab svg{ width:22px; height:22px; flex-shrink:0; }
+  .wa-tab span{ writing-mode:vertical-rl; transform:rotate(180deg); font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:.76rem; letter-spacing:.04em; }
+  .wa-widget.is-open .wa-tab{ background:#1fbd5a; }
+  .wa-panel{ position:absolute; right:100%; top:50%; transform:translateY(-50%) translateX(16px); width:min(86vw, 310px); margin-right:14px; background:var(--paper); border-radius:18px; box-shadow:0 26px 60px -18px rgba(4,53,122,.4); overflow:hidden; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; }
+  .wa-widget.is-open .wa-panel{ opacity:1; pointer-events:auto; transform:translateY(-50%) translateX(0); }
+  .wa-panel-header{ display:flex; align-items:center; gap:.75rem; padding:1rem 2.6rem 1rem 1.1rem; background:var(--blue-900); position:relative; }
+  .wa-panel-header img{ width:38px; height:38px; border-radius:50%; flex-shrink:0; }
+  .wa-panel-header strong{ display:block; font-family:'Space Grotesk',sans-serif; font-size:.95rem; color:#fff; }
+  .wa-panel-header span{ display:block; font-size:.72rem; color:rgba(255,255,255,.72); margin-top:.15rem; }
+  .wa-close{ position:absolute; top:.65rem; right:.7rem; width:26px; height:26px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.12); border:none; border-radius:50%; color:#fff; opacity:.85; font-size:1rem; line-height:1; cursor:pointer; transition:background .2s ease, opacity .2s ease; }
+  .wa-close:hover{ background:rgba(255,255,255,.22); opacity:1; }
+  .wa-panel-body{ padding:1.1rem; background:var(--blue-50); }
+  .wa-bubble{ background:#fff; border-radius:4px 14px 14px 14px; padding:.8rem 1rem; font-size:.86rem; line-height:1.5; color:var(--ink); box-shadow:0 2px 10px rgba(4,53,122,.08); }
+  .wa-bubble strong{ color:var(--blue-900); }
+  .wa-panel-cta{ display:flex; align-items:center; justify-content:center; gap:.55rem; background:#25D366; color:#fff; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:.9rem; padding:.9rem; margin:0 1.1rem 1.1rem; border-radius:10px; transition:background .2s ease; }
+  .wa-panel-cta:hover{ background:#1fbd5a; }
+  .wa-panel-cta svg{ width:19px; height:19px; }
+  @media (max-width:560px){ .wa-widget{ top:33%; transform:translateY(-50%); } }
+  @media (prefers-reduced-motion: reduce){ .wa-tab, .wa-panel{ transition:none; } }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <a href="index.html" class="logo-mark">
+    <img src="https://static.wixstatic.com/media/2101a0_42cb451cfc714800819b179d2c549a51~mv2.jpeg" alt="Logotipo HEMCI">
+    <div class="logo-text">HEMCI<span>Hospital de Especialidades Médicas de la Ciénega</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html#inicio">Inicio</a>
+    <a href="index.html#especialidades">Especialidades</a>
+    <a href="#proceso">Nuestro proceso</a>
+    <a href="#estudios">Estudios</a>
+    <a href="index.html#contacto" class="cta">Agendar cita →</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMobilePanel">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-mobile-panel" id="navMobilePanel">
+  <a href="index.html#inicio">Inicio</a>
+  <a href="index.html#especialidades">Especialidades</a>
+  <a href="#proceso">Nuestro proceso</a>
+  <a href="#estudios">Estudios</a>
+  <a href="index.html#contacto" class="cta">Agendar cita →</a>
+</div>
+
+<!-- ============ 1. HERO SPLIT ============ -->
+<header class="split-hero" id="inicio">
+  <div class="hero-field" aria-hidden="true"></div>
+  <div class="split-hero-text">
+    <span class="eyebrow-label">Servicio auxiliar de diagnóstico</span>
+    <h1>Tu diagnóstico empieza con datos precisos</h1>
+    <p>Laboratorio Clínico HEMCI: análisis automatizados, control de calidad riguroso y resultados que tu médico puede interpretar con confianza.</p>
+    <div class="split-hero-actions">
+      <a href="#estudios" class="btn btn-primary">Ver estudios disponibles</a>
+      <a href="index.html#contacto" class="btn btn-ghost">Agendar toma de muestra</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><span>Análisis automatizados</span></div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><span>Control de calidad riguroso</span></div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><span>Resultados confiables</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="lab-wrap">
+      <div class="lab-viewer" aria-hidden="true">
+        <div class="lab-viewer-bar">
+          <div class="lab-dots"><span></span><span></span><span></span></div>
+          <span class="lab-viewer-label mono">LIS · Sistema de resultados</span>
+        </div>
+        <div class="lab-viewer-screen">
+          <svg class="lab-illustration" viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="tubeFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.34"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.08"/>
+              </linearGradient>
+            </defs>
+            <rect x="18" y="300" width="264" height="15" rx="7" fill="rgba(255,255,255,0.12)"/>
+            <rect x="24" y="90" width="30" height="210" rx="15" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.6"/>
+            <rect x="27" y="152" width="24" height="145" rx="12" fill="url(#tubeFill)"/>
+            <rect x="24" y="70" width="30" height="22" rx="6" fill="#c7b8f5" opacity="0.6"/>
+            <rect x="97" y="90" width="30" height="210" rx="15" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.6"/>
+            <rect x="100" y="122" width="24" height="175" rx="12" fill="url(#tubeFill)"/>
+            <rect x="97" y="70" width="30" height="22" rx="6" fill="#8ec9ff" opacity="0.6"/>
+            <rect x="170" y="90" width="30" height="210" rx="15" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.6"/>
+            <rect x="173" y="107" width="24" height="190" rx="12" fill="url(#tubeFill)"/>
+            <rect x="170" y="70" width="30" height="22" rx="6" fill="#ffd88a" opacity="0.6"/>
+            <rect x="243" y="90" width="30" height="210" rx="15" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.6"/>
+            <rect x="246" y="137" width="24" height="160" rx="12" fill="url(#tubeFill)"/>
+            <rect x="243" y="70" width="30" height="22" rx="6" fill="#8be0c0" opacity="0.6"/>
+          </svg>
+          <div class="scan-line"></div>
+          <div class="diag-reticle tl"></div>
+          <div class="diag-reticle br"></div>
+          <span class="diag-tag tag-tl mono">ANÁLISIS AUTOMATIZADO</span>
+          <span class="diag-tag tag-br mono">CONTROL DE CALIDAD</span>
+        </div>
+      </div>
+      <div class="float-card">
+        <div class="fc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <div class="fc-label"><strong>Control de calidad</strong>en cada etapa del proceso analítico</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 2. PROCESO ============ -->
+<section class="process" id="proceso">
+  <div class="process-head">
+    <span class="eyebrow-label light">Nuestro proceso</span>
+    <h2>De la muestra al resultado</h2>
+    <p>Un flujo de trabajo estandarizado que prioriza la exactitud y la trazabilidad de cada estudio.</p>
+  </div>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h4>Toma de muestra</h4>
+      <p>Personal certificado bajo protocolos de higiene y seguridad.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h4>Procesamiento</h4>
+      <p>Equipos automatizados que reducen el margen de error humano.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h4>Validación</h4>
+      <p>Revisión y control de calidad antes de liberar cada resultado.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h4>Entrega</h4>
+      <p>Resultados claros, entregados de forma oportuna al paciente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. CATÁLOGO SELECCIONABLE + ORDEN EN PDF ============ -->
+<section class="bento-wrap" id="estudios" style="padding-bottom:20px;">
+  <div class="bento-head">
+    <span class="eyebrow-label">Catálogo</span>
+    <h2>Solicita tus estudios de laboratorio</h2>
+    <p>Selecciona los estudios que necesitas, completa los datos del paciente y genera tu orden en PDF para enviarla por WhatsApp.</p>
+  </div>
+</section>
+
+<section class="order-wrap">
+  <div class="order-grid">
+    <div class="study-categories" id="studyCategories"><!-- generado por JS --></div>
+
+    <aside class="order-summary">
+      <h3>Tu orden</h3>
+      <p class="summary-count"><b id="selectedCount">0</b> estudios seleccionados</p>
+      <ul class="selected-list" id="selectedList"></ul>
+      <button type="button" class="btn btn-primary" id="openFormBtn" disabled>Continuar con mis datos</button>
+      <a class="more-studies-link" href="https://wa.me/523926882256?text=Hola%2C%20estoy%20buscando%20un%20estudio%20de%20laboratorio%20que%20no%20aparece%20en%20el%20cat%C3%A1logo%20de%20HEMCI.%20%C2%BFMe%20pueden%20apoyar%3F" target="_blank" rel="noopener">
+        ¿No encuentras tu estudio?
+        <strong>Más estudios, escríbenos
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </strong>
+      </a>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ MODAL: DATOS DEL SOLICITANTE ============ -->
+<div class="order-modal" id="orderModal" aria-hidden="true">
+  <div class="order-modal-backdrop" id="orderModalBackdrop"></div>
+  <div class="order-modal-panel">
+    <button type="button" class="order-modal-close" id="orderModalClose" aria-label="Cerrar">✕</button>
+
+    <form id="orderForm">
+      <h3>Datos del solicitante</h3>
+      <p class="modal-sub">Esta información se incluirá en tu orden de estudios en PDF.</p>
+
+      <label>Nombre completo *
+        <input type="text" name="nombre" required>
+      </label>
+      <label>Fecha de nacimiento *
+        <div class="dob-fields">
+          <select name="dobDia" id="dobDia" required aria-label="Día"></select>
+          <select name="dobMes" id="dobMes" required aria-label="Mes"></select>
+          <select name="dobAnio" id="dobAnio" required aria-label="Año"></select>
+        </div>
+      </label>
+      <label>Sexo *
+        <select name="sexo" required>
+          <option value="">Selecciona…</option>
+          <option>Femenino</option>
+          <option>Masculino</option>
+        </select>
+      </label>
+
+      <label class="checkbox-inline">
+        <input type="checkbox" id="voluntarioCheck">
+        <span class="check-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="check-label">Voluntario</span>
+      </label>
+      <small class="checkbox-hint">Omite diagnóstico y datos del médico</small>
+
+      <div id="diagnosticoGroup">
+        <label>Diagnóstico *
+          <textarea name="diagnostico" required></textarea>
+        </label>
+      </div>
+      <div id="medicoGroup">
+        <label>Nombre del médico *
+          <input type="text" name="medico" required>
+        </label>
+        <label>Teléfono del médico *
+          <input type="tel" name="medicoTel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" title="Ingresa un teléfono a 10 dígitos" required>
+        </label>
+      </div>
+
+      <div class="entrega-question">¿Dónde deseas recibir tus resultados? *</div>
+      <div class="entrega-options">
+        <label class="checkbox-inline">
+          <input type="checkbox" class="entregaOpt" value="correo" data-target="entregaCorreoField">
+          <span class="check-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span class="check-label">Correo electrónico</span>
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" class="entregaOpt" value="whatsapp" data-target="entregaWhatsappField">
+          <span class="check-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span class="check-label">WhatsApp</span>
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" class="entregaOpt" value="laboratorio">
+          <span class="check-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span class="check-label">Recoger en laboratorio</span>
+        </label>
+      </div>
+
+      <div class="entrega-extra" id="entregaCorreoField" style="display:none;">
+        <label>Correo electrónico *
+          <input type="email" name="entregaCorreo" pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Ingresa un correo electrónico válido, por ejemplo: nombre@correo.com">
+        </label>
+      </div>
+      <div class="entrega-extra" id="entregaWhatsappField" style="display:none;">
+        <label>Número de WhatsApp *
+          <input type="tel" name="entregaWhatsapp" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" title="Ingresa un teléfono a 10 dígitos">
+        </label>
+      </div>
+
+      <div class="order-modal-actions">
+        <button type="submit" class="btn btn-primary">Generar Orden</button>
+      </div>
+    </form>
+
+    <div id="pdfReadyBox" style="display:none;">
+      <h3>Tu orden está lista</h3>
+      <p>Descarga tu PDF y compártelo por WhatsApp para confirmar tu cita.</p>
+      <a href="#" id="downloadPdfBtn" class="btn btn-ghost">Descargar PDF</a>
+      <a href="#" id="sendWaBtn" target="_blank" rel="noopener" class="btn btn-primary">Enviar por WhatsApp</a>
+      <p class="wa-note">Se abrirá WhatsApp con un mensaje listo — adjunta ahí el PDF que acabas de descargar.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 4. FRANJA DE ATRIBUTOS ============ -->
+<section class="attr-band">
+  <div class="attr">
+    <div class="a-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></div>
+    <div class="a-text"><strong>Equipo automatizado</strong><span>Tecnología de alta precisión</span></div>
+  </div>
+  <div class="attr">
+    <div class="a-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+    <div class="a-text"><strong>Entrega en línea</strong><span>Resultados accesibles y claros</span></div>
+  </div>
+  <div class="attr">
+    <div class="a-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+    <div class="a-text"><strong>Personal certificado</strong><span>Toma de muestra y análisis</span></div>
+  </div>
+</section>
+
+<!-- ============ 5. CTA FINAL ============ -->
+<section class="cta-band">
+  <h2>Agenda tu estudio hoy</h2>
+  <p>Escríbenos y con gusto te orientamos sobre indicaciones, horarios y entrega de resultados.</p>
+  <a href="https://wa.me/523926882256?text=Hola%2C%20quisiera%20agendar%20un%20estudio%20de%20Laboratorio%20en%20HEMCI." target="_blank" rel="noopener" class="btn btn-white">Escríbenos por WhatsApp</a>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <span>© 2026 HEMCI — Hospital de Especialidades Médicas de la Ciénega</span>
+  <span>Ocotlán, Jalisco</span>
+</footer>
+<div class="credit-bar">
+  <span>Sitio creado por</span>
+  <a href="https://www.facebook.com/GalexDigital/" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
+    Galex Digital
+  </a>
+  <span class="credit-divider">·</span>
+  <a href="tel:+523921031972">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.7 2Z"/></svg>
+    392 103 1972
+  </a>
+</div>
+
+<!-- ================= WHATSAPP WIDGET ================= -->
+<div class="wa-widget" id="waWidget">
+  <button type="button" class="wa-tab" id="waTab" aria-label="Abrir chat de WhatsApp" aria-expanded="false" aria-controls="waPanel">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C10 9 9.4 7.6 9.2 7c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.6.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.6 1.4 5.1L2 22l5.1-1.3c1.4.8 3.1 1.2 4.9 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3.3.9.9-3.2-.2-.3C3.8 14.3 3.3 12.7 3.3 12c0-4.8 3.9-8.7 8.7-8.7s8.7 3.9 8.7 8.7-3.9 8.7-8.7 8.7z"/></svg>
+    <span>Escríbenos</span>
+  </button>
+
+  <div class="wa-panel" id="waPanel">
+    <div class="wa-panel-header">
+      <img src="https://static.wixstatic.com/media/2101a0_42cb451cfc714800819b179d2c549a51~mv2.jpeg" alt="HEMCI">
+      <div>
+        <strong>HEMCI</strong>
+        <span>Normalmente responde en minutos</span>
+      </div>
+      <button type="button" class="wa-close" id="waClose" aria-label="Cerrar chat">✕</button>
+    </div>
+    <div class="wa-panel-body">
+      <div class="wa-bubble">
+        Hola 👋 Soy del equipo de <strong>HEMCI</strong>. ¿Tienes dudas o quieres agendar tu cita? Escríbenos.
+      </div>
+    </div>
+    <a href="#" id="waCtaLink" target="_blank" rel="noopener" class="wa-panel-cta">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C10 9 9.4 7.6 9.2 7c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.6.2-1.2.2-1.3-.1-.2-.3-.3-.6-.4z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.6 1.4 5.1L2 22l5.1-1.3c1.4.8 3.1 1.2 4.9 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3.3.9.9-3.2-.2-.3C3.8 14.3 3.3 12.7 3.3 12c0-4.8 3.9-8.7 8.7-8.7s8.7 3.9 8.7 8.7-3.9 8.7-8.7 8.7z"/></svg>
+      Iniciar chat
+    </a>
+  </div>
+</div>
+
+<script>
+(function(){
+  const navToggle = document.getElementById('navToggle');
+  const navMobilePanel = document.getElementById('navMobilePanel');
+
+  function closeMobileNav(){
+    navToggle.classList.remove('is-open');
+    navMobilePanel.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  if(navToggle && navMobilePanel){
+    navToggle.addEventListener('click', () => {
+      const isOpen = navMobilePanel.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    navMobilePanel.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeMobileNav);
+    });
+
+    window.addEventListener('resize', () => {
+      if(window.innerWidth > 760) closeMobileNav();
+    });
+  }
+
+  /* ---------- WIDGET FLOTANTE de WhatsApp ---------- */
+  const WHATSAPP_NUMBER = '523926882256'; // +52 392 688 2256
+  const waWidget = document.getElementById('waWidget');
+  const waTab = document.getElementById('waTab');
+  const waClose = document.getElementById('waClose');
+  const waCtaLink = document.getElementById('waCtaLink');
+
+  if(waWidget && waTab){
+    const waMensaje = 'Hola, me gustaría más información sobre Laboratorio Clínico y agendar una cita en HEMCI.';
+    waCtaLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMensaje)}`;
+
+    function toggleWaPanel(open){
+      const isOpen = open !== undefined ? open : !waWidget.classList.contains('is-open');
+      waWidget.classList.toggle('is-open', isOpen);
+      waTab.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    waTab.addEventListener('click', () => toggleWaPanel());
+    waClose.addEventListener('click', () => toggleWaPanel(false));
+
+    document.addEventListener('click', (e) => {
+      if(waWidget.classList.contains('is-open') && !waWidget.contains(e.target)){
+        toggleWaPanel(false);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') toggleWaPanel(false);
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const WHATSAPP_NUMBER = '523926882256';
+  const LOGO_URL = 'https://static.wixstatic.com/media/2101a0_42cb451cfc714800819b179d2c549a51~mv2.jpeg';
+
+  /* ---------- Catálogo de estudios, por categoría ---------- */
+  const STUDY_CATEGORIES = [
+    { name:'Hematología', items:[
+      { id:'biometria', label:'Biometría hemática' },
+      { id:'reticulocitos', label:'Reticulocitos' },
+      { id:'grupo-rh', label:'Grupo sanguíneo y Rh' },
+      { id:'tiempos-coag', label:'Tiempos de coagulación', sub:'TP y TTP' },
+      { id:'gasometria', label:'Gasometría arterial y venosa' },
+      { id:'tincion-wright', label:'Tinción de Wright' },
+    ]},
+    { name:'Química clínica', items:[
+      { id:'qs3', label:'Química sanguínea de 3 elementos', sub:'Glucosa, urea y creatinina' },
+      { id:'qs4', label:'Química sanguínea de 4 elementos', sub:'Glucosa, urea, creatinina y ácido úrico' },
+      { id:'qs6', label:'Química sanguínea de 6 elementos', sub:'Glucosa, urea, creatinina, ácido úrico, colesterol total y triglicéridos' },
+      { id:'qs27', label:'Química sanguínea de 27 elementos', sub:'Perfil metabólico completo: electrolitos, función hepática y renal, lípidos, EGO y biometría hemática' },
+      { id:'lipidos', label:'Perfil de lípidos', sub:'Colesterol total, triglicéridos, HDL, LDL y VLDL' },
+      { id:'hepatico', label:'Perfil hepático', sub:'Proteínas totales, albúmina, globulina, relación A/G, bilirrubinas, TGO, TGP y ALP' },
+      { id:'enzimas-pancreaticas', label:'Enzimas pancreáticas', sub:'Amilasa y lipasa' },
+      { id:'electrolitos3', label:'Electrolitos séricos de 3 elementos', sub:'Sodio, potasio y cloro' },
+      { id:'electrolitos6', label:'Electrolitos séricos de 6 elementos', sub:'Sodio, potasio, cloro, magnesio, fósforo y calcio' },
+      { id:'curva-glucosa', label:'Curva de tolerancia a la glucosa' },
+      { id:'cpk', label:'CPK' },
+    ]},
+    { name:'Marcadores cardíacos y de urgencia', items:[
+      { id:'procalcitonina', label:'Procalcitonina' },
+      { id:'dimero-d', label:'Dímero D' },
+      { id:'nt-probnp', label:'NT-proBNP' },
+      { id:'triage-cardiaco', label:'Triage cardiaco', sub:'Troponina, mioglobina y CK-MB' },
+    ]},
+    { name:'Uroanálisis y coprología', items:[
+      { id:'ego', label:'Examen general de orina' },
+      { id:'coprologico', label:'Coprológico general' },
+      { id:'coproparasitoscopico', label:'Coproparasitoscópico' },
+      { id:'coproparasitoscopico-seriado', label:'Coproparasitoscópico seriado (3)' },
+      { id:'sangre-oculta', label:'Sangre oculta en heces' },
+      { id:'azucares-reductores', label:'Azúcares reductores' },
+      { id:'amibas-fresco', label:'Amibas en fresco' },
+    ]},
+    { name:'Serología e inmunología', items:[
+      { id:'reacciones-febriles', label:'Reacciones febriles' },
+      { id:'pcr', label:'Proteína C reactiva' },
+      { id:'factor-reumatoide', label:'Factor reumatoide' },
+      { id:'antiestreptolisinas', label:'Antiestreptolisinas' },
+      { id:'hiv', label:'HIV 1 y 2' },
+      { id:'vdrl', label:'V.D.R.L. (cuantitativo)' },
+      { id:'hgc', label:'Hormona gonadotropina coriónica humana', sub:'Cualitativa y cuantitativa' },
+    ]},
+    { name:'Pruebas rápidas', items:[
+      { id:'covid', label:'Prueba rápida de SARS-CoV-2' },
+      { id:'influenza', label:'Prueba rápida de influenza A y B' },
+      { id:'dengue', label:'Prueba rápida de Dengue', sub:'IgG, IgM y NS1' },
+      { id:'vsr', label:'Prueba rápida de virus sincitial respiratorio' },
+      { id:'antidoping', label:'Antidoping de 5 elementos', sub:'Marihuana, cocaína, metanfetamina, anfetamina y benzodiacepinas' },
+    ]},
+    { name:'Microbiología', items:[
+      { id:'adeno-rota-astro', label:'Adenovirus / Rotavirus / Astrovirus' },
+      { id:'tincion-gram', label:'Tinción de GRAM' },
+    ]},
+  ];
+
+  const selected = new Map(); // id -> label
+
+  function esc(str){
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  }
+
+  function renderCategories(){
+    const wrap = document.getElementById('studyCategories');
+    if(!wrap) return;
+    wrap.innerHTML = STUDY_CATEGORIES.map((cat, ci) => `
+      <details class="cat-group"${ci===0 ? ' open' : ''}>
+        <summary>
+          <span>${esc(cat.name)}</span>
+          <span class="cat-meta">
+            <span class="cat-badge">${cat.items.length} estudios</span>
+            <span class="chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0268E9" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </span>
+        </summary>
+        <div class="cat-body">
+          ${cat.items.map(it => `
+            <label class="study-check">
+              <input type="checkbox" value="${esc(it.id)}" data-label="${esc(it.label)}">
+              <span class="label">${esc(it.label)}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</span>
+            </label>
+          `).join('')}
+        </div>
+      </details>
+    `).join('');
+  }
+
+  function renderSummary(){
+    const countEl = document.getElementById('selectedCount');
+    const listEl = document.getElementById('selectedList');
+    const openBtn = document.getElementById('openFormBtn');
+    if(!countEl || !listEl || !openBtn) return;
+    countEl.textContent = selected.size;
+    listEl.innerHTML = Array.from(selected.entries()).map(([id,label]) => `
+      <li>${esc(label)}<button type="button" data-remove="${esc(id)}" aria-label="Quitar estudio">✕</button></li>
+    `).join('');
+    openBtn.disabled = selected.size === 0;
+  }
+
+  function poblarSelectorFecha(){
+    const diaSel = document.getElementById('dobDia');
+    const mesSel = document.getElementById('dobMes');
+    const anioSel = document.getElementById('dobAnio');
+    if(!diaSel || !mesSel || !anioSel) return;
+
+    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+    diaSel.innerHTML = '<option value="">Día</option>' +
+      Array.from({length:31}, (_, i) => { const d = String(i+1).padStart(2,'0'); return `<option value="${d}">${d}</option>`; }).join('');
+
+    mesSel.innerHTML = '<option value="">Mes</option>' +
+      meses.map((m, i) => `<option value="${String(i+1).padStart(2,'0')}">${m}</option>`).join('');
+
+    const currentYear = new Date().getFullYear();
+    anioSel.innerHTML = '<option value="">Año</option>' +
+      Array.from({length:110}, (_, i) => currentYear - i).map((y) => `<option value="${y}">${y}</option>`).join('');
+  }
+  poblarSelectorFecha();
+
+  /* ---------- Teléfonos: solo dígitos, máximo 10 ---------- */
+  ['medicoTel', 'entregaWhatsapp'].forEach((fieldName) => {
+    const input = document.querySelector(`[name="${fieldName}"]`);
+    if(!input) return;
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g, '').slice(0, 10);
+    });
+  });
+
+  renderCategories();
+  renderSummary();
+
+  const studyCategories = document.getElementById('studyCategories');
+  if(studyCategories){
+    studyCategories.addEventListener('change', (e) => {
+      const cb = e.target;
+      if(!(cb instanceof HTMLInputElement) || cb.type !== 'checkbox') return;
+      if(cb.checked) selected.set(cb.value, cb.dataset.label);
+      else selected.delete(cb.value);
+      renderSummary();
+    });
+  }
+
+  const selectedList = document.getElementById('selectedList');
+  if(selectedList){
+    selectedList.addEventListener('click', (e) => {
+      const id = e.target.getAttribute && e.target.getAttribute('data-remove');
+      if(!id) return;
+      selected.delete(id);
+      const cb = studyCategories.querySelector(`input[value="${CSS.escape(id)}"]`);
+      if(cb) cb.checked = false;
+      renderSummary();
+    });
+  }
+
+  /* ---------- Modal ---------- */
+  const orderModal = document.getElementById('orderModal');
+  const openFormBtn = document.getElementById('openFormBtn');
+  const orderForm = document.getElementById('orderForm');
+  const pdfReadyBox = document.getElementById('pdfReadyBox');
+
+  function openModal(){
+    if(!orderModal) return;
+    orderModal.classList.add('is-open');
+    orderModal.setAttribute('aria-hidden', 'false');
+  }
+  function closeModal(){
+    if(!orderModal) return;
+    orderModal.classList.remove('is-open');
+    orderModal.setAttribute('aria-hidden', 'true');
+  }
+  if(openFormBtn) openFormBtn.addEventListener('click', openModal);
+  const modalClose = document.getElementById('orderModalClose');
+  const modalBackdrop = document.getElementById('orderModalBackdrop');
+  if(modalClose) modalClose.addEventListener('click', closeModal);
+  if(modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+
+  /* ---------- Estudio voluntario: omite diagnóstico y médico ---------- */
+  const voluntarioCheck = document.getElementById('voluntarioCheck');
+  const diagnosticoGroup = document.getElementById('diagnosticoGroup');
+  const medicoGroup = document.getElementById('medicoGroup');
+  if(voluntarioCheck && orderForm){
+    voluntarioCheck.addEventListener('change', () => {
+      const isVol = voluntarioCheck.checked;
+      diagnosticoGroup.style.display = isVol ? 'none' : 'block';
+      medicoGroup.style.display = isVol ? 'none' : 'block';
+      orderForm.diagnostico.required = !isVol;
+      orderForm.medico.required = !isVol;
+      orderForm.medicoTel.required = !isVol;
+    });
+  }
+
+  /* ---------- Recepción de resultados: opciones múltiples con campos condicionales ---------- */
+  const entregaChecks = document.querySelectorAll('.entregaOpt');
+  entregaChecks.forEach((chk) => {
+    chk.addEventListener('change', () => {
+      const targetId = chk.dataset.target;
+      if(!targetId) return;
+      const targetDiv = document.getElementById(targetId);
+      const input = targetDiv ? targetDiv.querySelector('input') : null;
+      if(!targetDiv || !input) return;
+      if(chk.checked){
+        targetDiv.style.display = 'block';
+        input.required = true;
+      } else {
+        targetDiv.style.display = 'none';
+        input.required = false;
+        input.value = '';
+      }
+    });
+  });
+
+  function entregaSeleccionValida(){
+    return Array.from(entregaChecks).some((c) => c.checked);
+  }
+
+  function resumenEntrega(){
+    const partes = [];
+    const correoChk = document.querySelector('.entregaOpt[value="correo"]');
+    const waChk = document.querySelector('.entregaOpt[value="whatsapp"]');
+    const labChk = document.querySelector('.entregaOpt[value="laboratorio"]');
+    if(correoChk && correoChk.checked) partes.push(`Correo electrónico: ${orderForm.entregaCorreo.value.trim()}`);
+    if(waChk && waChk.checked) partes.push(`WhatsApp: ${orderForm.entregaWhatsapp.value.trim()}`);
+    if(labChk && labChk.checked) partes.push('Recoger en laboratorio');
+    return partes.join(' · ');
+  }
+
+  /* ---------- Generación del PDF con logo de fondo ---------- */
+  function loadImageAsDataURL(url){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try{
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.92));
+        } catch(err){ reject(err); }
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  function drawWatermark(doc, pageW, pageH, logoData){
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({ opacity: 0.06 }));
+    if(logoData){
+      const size = 300;
+      doc.addImage(logoData, 'JPEG', (pageW - size) / 2, (pageH - size) / 2, size, size);
+    } else {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(100);
+      doc.setTextColor(4, 53, 122);
+      doc.text('HEMCI', pageW / 2, pageH / 2, { angle: 35, align: 'center' });
+    }
+    doc.restoreGraphicsState();
+  }
+
+  async function generarPDF(data){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+
+    let logoData = null;
+    try{ logoData = await loadImageAsDataURL(LOGO_URL); } catch(e){ logoData = null; }
+
+    drawWatermark(doc, pageW, pageH, logoData);
+
+    doc.setFillColor(4, 53, 122);
+    doc.rect(0, 0, pageW, 74, 'F');
+    if(logoData) doc.addImage(logoData, 'JPEG', 40, 18, 38, 38);
+    const titleX = logoData ? 90 : 40;
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
+    doc.text('HEMCI', titleX, 34);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+    doc.text('Hospital de Especialidades Médicas de la Ciénega', titleX, 48);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
+    doc.text('Orden de estudios de laboratorio', pageW - 40, 32, { align: 'right' });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+    const folio = 'LAB-' + Date.now().toString().slice(-8);
+    doc.text(`Folio ${folio} · ${new Date().toLocaleDateString('es-MX')}`, pageW - 40, 46, { align: 'right' });
+
+    let y = 104;
+    doc.setTextColor(4, 53, 122); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    doc.text('Datos del paciente', 40, y); y += 8;
+    doc.setDrawColor(199, 224, 255); doc.line(40, y, pageW - 40, y); y += 20;
+
+    doc.setFontSize(10.2);
+    function row(label, value){
+      doc.setTextColor(74, 90, 117); doc.setFont('helvetica', 'bold');
+      doc.text(label, 40, y);
+      doc.setTextColor(12, 28, 51); doc.setFont('helvetica', 'normal');
+      const lines = doc.splitTextToSize(String(value || '—'), pageW - 225);
+      doc.text(lines, 185, y);
+      y += 17 * Math.max(lines.length, 1);
+    }
+    row('Nombre completo', data.nombre);
+    row('Fecha de nacimiento', data.fechaNacimiento);
+    row('Sexo', data.sexo);
+    if(data.voluntario){
+      row('Tipo de solicitud', 'Estudio voluntario (sin diagnóstico ni médico)');
+    } else {
+      row('Diagnóstico', data.diagnostico);
+      row('Médico solicitante', data.medico);
+      row('Teléfono del médico', data.medicoTel);
+    }
+    row('Recepción de resultados', data.entrega);
+
+    y += 10;
+    doc.setTextColor(4, 53, 122); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    doc.text(`Estudios solicitados (${data.estudios.length})`, 40, y); y += 8;
+    doc.setDrawColor(199, 224, 255); doc.line(40, y, pageW - 40, y); y += 20;
+
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(12, 28, 51);
+    data.estudios.forEach((nombreEstudio, i) => {
+      const lines = doc.splitTextToSize(`${i + 1}. ${nombreEstudio}`, pageW - 90);
+      lines.forEach((line) => {
+        if(y > pageH - 70){
+          doc.addPage();
+          y = 60;
+          drawWatermark(doc, pageW, pageH, logoData);
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(12, 28, 51);
+        }
+        doc.text(line, 46, y);
+        y += 15;
+      });
+    });
+
+    const footerY = pageH - 46;
+    doc.setDrawColor(221, 230, 245); doc.line(40, footerY - 14, pageW - 40, footerY - 14);
+    doc.setFontSize(8); doc.setTextColor(131, 147, 176);
+    doc.text('HEMCI · Ocotlán, Jalisco · Documento generado como orden de estudios; no constituye un resultado clínico.', 40, footerY);
+
+    return doc;
+  }
+
+  if(orderForm){
+    orderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if(selected.size === 0){
+        alert('Selecciona al menos un estudio antes de continuar.');
+        return;
+      }
+      if(!entregaSeleccionValida()){
+        alert('Selecciona al menos una opción para recibir tus resultados.');
+        return;
+      }
+      if(!orderForm.reportValidity()) return;
+
+      const data = {
+        nombre: orderForm.nombre.value.trim(),
+        fechaNacimiento: `${orderForm.dobDia.value}/${orderForm.dobMes.value}/${orderForm.dobAnio.value}`,
+        sexo: orderForm.sexo.value,
+        voluntario: voluntarioCheck.checked,
+        diagnostico: orderForm.diagnostico.value.trim(),
+        medico: orderForm.medico.value.trim(),
+        medicoTel: orderForm.medicoTel.value.trim(),
+        entrega: resumenEntrega(),
+        estudios: Array.from(selected.values()),
+      };
+
+      const submitBtn = orderForm.querySelector('button[type="submit"]');
+      const originalLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Generando…';
+
+      try{
+        const doc = await generarPDF(data);
+        const blob = doc.output('blob');
+        const url = URL.createObjectURL(blob);
+
+        const downloadBtn = document.getElementById('downloadPdfBtn');
+        downloadBtn.href = url;
+        downloadBtn.setAttribute('download', `Orden-Laboratorio-HEMCI-${data.nombre.replace(/\s+/g, '_') || 'paciente'}.pdf`);
+
+        const lines = [
+          'Hola, envío mi orden de estudios de Laboratorio HEMCI.',
+          '',
+          `Paciente: ${data.nombre}`,
+          `Estudios (${data.estudios.length}): ${data.estudios.join(', ')}`,
+          '',
+          'Adjunto el PDF de la orden en este chat.',
+          '',
+          'Me gustaría recibir una cotización además de conocer los horarios y fechas disponibles para programar mi cita de laboratorio...',
+        ];
+        const waText = encodeURIComponent(lines.join('\n'));
+        document.getElementById('sendWaBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waText}`;
+
+        orderForm.style.display = 'none';
+        pdfReadyBox.style.display = 'block';
+      } catch(err){
+        console.error(err);
+        alert('Ocurrió un error al generar el PDF. Intenta nuevamente.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
