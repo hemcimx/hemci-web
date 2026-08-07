@@ -1124,8 +1124,7 @@
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
     doc.text('Orden de estudios de laboratorio', pageW - 40, 32, { align: 'right' });
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
-    const folio = 'LAB-' + Date.now().toString().slice(-8);
-    doc.text(`Folio ${folio} · ${new Date().toLocaleDateString('es-MX')}`, pageW - 40, 46, { align: 'right' });
+    doc.text(new Date().toLocaleDateString('es-MX'), pageW - 40, 46, { align: 'right' });
 
     let y = 104;
     doc.setTextColor(4, 53, 122); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
@@ -1173,10 +1172,17 @@
       });
     });
 
-    const footerY = pageH - 46;
+    const footerY = pageH - 54;
     doc.setDrawColor(221, 230, 245); doc.line(40, footerY - 14, pageW - 40, footerY - 14);
     doc.setFontSize(8); doc.setTextColor(131, 147, 176);
-    doc.text('HEMCI · Ocotlán, Jalisco · Documento generado como orden de estudios; no constituye un resultado clínico.', 40, footerY);
+    doc.setFont('helvetica', 'normal');
+    doc.text('HEMCI · Ocotlán, Jalisco', 40, footerY);
+    doc.setFont('helvetica', 'bold');
+    const legendLines = doc.splitTextToSize(
+      'El Documento es informativo, no tiene alguna valides legal o que forme parte de un historial clínico.',
+      pageW - 80
+    );
+    doc.text(legendLines, 40, footerY + 11);
 
     return doc;
   }
