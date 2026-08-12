@@ -567,13 +567,61 @@
     <h2>Médicos generales de HEMCI</h2>
     <p>Atención cercana para el cuidado de tu salud y la de tu familia.</p>
   </div>
-    <div class="doctor-grid">
-    <div style="grid-column:1 / -1; text-align:center; padding:56px 28px; border:1.5px dashed var(--line); border-radius:16px; background:var(--blue-50);">
-      <span class="eyebrow-label" style="margin-bottom:12px;">Próximamente</span>
-      <h3 style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px; color:var(--blue-900); margin-bottom:10px;">Estamos confirmando a nuestro equipo médico</h3>
-      <p style="color:var(--ink-dim); font-size:14.5px; line-height:1.6; max-width:420px; margin:0 auto 26px;">Muy pronto podrás conocer a los especialistas de esta área y agendar tu consulta directamente aquí.</p>
-      <span class="btn btn-primary btn-sm" style="display:inline-block; width:auto; padding:11px 26px; opacity:.5; cursor:not-allowed; pointer-events:none;" aria-disabled="true">Agendar consulta</span>
+  <div class="doctor-grid">
+
+    <div class="doctor-card">
+      <div class="doctor-photo"><img src="Images/medicina-general/RafaelCuevas (2).jpg" alt="Dr. Rafael Cuevas"></div>
+      <div class="doctor-info">
+        <h4>Dr. Rafael Cuevas</h4>
+        <span class="role">Médico General</span>
+        <span class="schedule">
+          <!-- <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8393b0" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          Lun – Vie · 8:00 – 14:00
+        </span> -->
+        <a href="#" class="btn btn-primary btn-sm">Agendar consulta</a>
+      </div>
     </div>
+      <!--
+    <div class="doctor-card">
+      <div class="doctor-photo"><img src="Images/medicina-general/FernandaIbarra.jpg" alt="Dra. Fernanda Ibarra"></div>
+      <div class="doctor-info">
+        <h4>Dra. Fernanda Ibarra</h4>
+        <span class="role">Médica General</span>
+        <span class="schedule">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8393b0" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          Lun – Vie · 14:00 – 20:00
+        </span>
+        <a href="#" class="btn btn-primary btn-sm">Agendar consulta</a>
+      </div>
+    </div>
+
+    <div class="doctor-card">
+      <div class="doctor-photo"><img src="Images/medicina-general/GabrielNunez.jpg" alt="Dr. Gabriel Núñez"></div>
+      <div class="doctor-info">
+        <h4>Dr. Gabriel Núñez</h4>
+        <span class="role">Médico General</span>
+        <span class="schedule">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8393b0" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          Mar – Sáb · 9:00 – 15:00
+        </span>
+        <a href="#" class="btn btn-primary btn-sm">Agendar consulta</a>
+      </div>
+    </div>
+
+    <div class="doctor-card">
+      <div class="doctor-photo"><img src="Images/medicina-general/LuciaMontes.jpg" alt="Dra. Lucía Montes"></div>
+      <div class="doctor-info">
+        <h4>Dra. Lucía Montes</h4>
+        <span class="role">Médica General</span>
+        <span class="schedule">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8393b0" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          Lun, Mié, Vie · 10:00 – 16:00
+        </span>
+        <a href="#" class="btn btn-primary btn-sm">Agendar consulta</a>
+      </div>
+    </div>
+    -->
+
   </div>
 </section>
 
@@ -651,7 +699,7 @@
   }
 
   /* ---------- WIDGET FLOTANTE de WhatsApp ---------- */
-  const WHATSAPP_NUMBER = '523921031972'; // +52 392 103 1972
+  const WHATSAPP_NUMBER = '523926882256'; // +52 392 103 1972
   const waWidget = document.getElementById('waWidget');
   const waTab = document.getElementById('waTab');
   const waClose = document.getElementById('waClose');
