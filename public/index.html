@@ -305,11 +305,13 @@
 
   .card-grid{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:1.4rem;
+    grid-template-columns:repeat(5, 1fr);
+    gap:1.1rem;
   }
-  @media (max-width:940px){ .card-grid{ grid-template-columns:repeat(2, 1fr); } }
-  @media (max-width:620px){ .card-grid{ grid-template-columns:1fr; } }
+  @media (max-width:1200px){ .card-grid{ grid-template-columns:repeat(4, 1fr); } }
+  @media (max-width:940px){ .card-grid{ grid-template-columns:repeat(3, 1fr); } }
+  @media (max-width:700px){ .card-grid{ grid-template-columns:repeat(2, 1fr); } }
+  @media (max-width:480px){ .card-grid{ grid-template-columns:1fr; } }
 
   .feature-card{
     position:relative;
@@ -317,7 +319,7 @@
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:12px;
-    padding:2.2rem 1.9rem;
+    padding:1.6rem 1.3rem;
     opacity:0;
     transform:translateY(46px);
     cursor:pointer;
@@ -351,19 +353,19 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    width:52px; height:52px;
-    border-radius:10px;
+    width:42px; height:42px;
+    border-radius:9px;
     background:var(--accent-soft);
     color:var(--blue);
-    margin-bottom:1.5rem;
+    margin-bottom:1rem;
     transition:background .35s ease, color .35s ease;
   }
-  .card-icon svg{ width:26px; height:26px; }
+  .card-icon svg{ width:21px; height:21px; }
 
   .feature-card.is-focused .card-icon{ background:var(--white); color:var(--blue); }
 
-  .feature-card h3{ font-size:1.16rem; margin-bottom:.6rem; transition:color .35s ease; }
-  .feature-card p{ color:var(--text-dim); font-size:.93rem; line-height:1.6; transition:color .35s ease; }
+  .feature-card h3{ font-size:1rem; margin-bottom:.45rem; transition:color .35s ease; }
+  .feature-card p{ color:var(--text-dim); font-size:.83rem; line-height:1.5; transition:color .35s ease; }
 
   .feature-card.is-focused h3{ color:var(--white); }
   .feature-card.is-focused p{ color:rgba(255,255,255,.88); }
@@ -372,8 +374,8 @@
     display:inline-flex;
     align-items:center;
     gap:.4rem;
-    margin-top:1.1rem;
-    font-size:.83rem;
+    margin-top:.85rem;
+    font-size:.76rem;
     font-weight:600;
     color:var(--white);
     opacity:0;
@@ -887,36 +889,6 @@
       <p>Contamos con especialistas certificados y equipo de vanguardia para cuidar tu salud y la de tu familia.</p>
     </div>
     <div class="card-grid">
-       <!-- URL DE LA PAGINA URGENCIAS -->
-      <a class="feature-card" href="urgencias.html">
-        <div class="card-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="24" cy="24" r="18"/>
-            <path d="M24 14v20M14 24h20"/>
-          </svg>
-        </div>
-        <h3>Urgencias</h3>
-        <p>Atención médica inmediata las 24 horas, los 365 días del año.</p>
-              <span class="card-more">Conocer más
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-       <!-- URL DE LA PAGINA MEDICINA GENERAL -->
-      <a class="feature-card" href="medicina-general.html">
-        <div class="card-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="8" y="16" width="32" height="22" rx="3"/>
-            <path d="M8 25h32"/>
-            <path d="M20 16v-4a4 4 0 0 1 4-4v0a4 4 0 0 1 4 4v4"/>
-            <path d="M24 27v8M20 31h8"/>
-          </svg>
-        </div>
-        <h3>Medicina General</h3>
-        <p>Consulta médica general para el cuidado de tu salud y la de tu familia.</p>
-              <span class="card-more">Conocer más
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
        <!-- URL DE LA PAGINA ANGIOLOGIA -->
       <a class="feature-card" href="angiologia.html">
         <div class="card-icon">
@@ -927,6 +899,21 @@
         </div>
         <h3>Angiología</h3>
         <p>Diagnóstico y tratamiento de enfermedades de venas y arterias.</p>
+              <span class="card-more">Conocer más
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+        <!-- URL DE LA PAGINA CIRUGIA GENERAL -->
+      <a class="feature-card" href="cirugia-general.html">
+        <div class="card-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 36 26 22"/>
+            <path d="M26 22 34 14a3 3 0 0 1 4 4l-8 8"/>
+            <circle cx="12" cy="36" r="3"/>
+          </svg>
+        </div>
+        <h3>Cirugía General</h3>
+        <p>Procedimientos quirúrgicos con técnicas mínimamente invasivas y recuperación más rápida.</p>
               <span class="card-more">Conocer más
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
@@ -961,6 +948,82 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
+        <!-- URL DE LA PAGINA GINECOLOGIA -->
+      <a class="feature-card" href="ginecologia-obstetricia.html">
+        <div class="card-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="24" cy="17" r="10"/>
+            <path d="M24 27v13"/>
+            <path d="M17 34h14"/>
+          </svg>
+        </div>
+        <h3>Ginecología y Obstetricia</h3>
+        <p>Acompañamiento cercano en la salud femenina, el embarazo y el parto.</p>
+              <span class="card-more">Conocer más
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+       <!-- URL DE LA PAGINA MEDICINA GENERAL -->
+      <a class="feature-card" href="medicina-general.html">
+        <div class="card-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="8" y="16" width="32" height="22" rx="3"/>
+            <path d="M8 25h32"/>
+            <path d="M20 16v-4a4 4 0 0 1 4-4v0a4 4 0 0 1 4 4v4"/>
+            <path d="M24 27v8M20 31h8"/>
+          </svg>
+        </div>
+        <h3>Medicina General</h3>
+        <p>Consulta médica general para el cuidado de tu salud y la de tu familia.</p>
+              <span class="card-more">Conocer más
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      <!-- URL DE LA PAGINA MED INTERNA -->
+      <a class="feature-card" href="medicina-interna.html">
+        <div class="card-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 8v11a9 9 0 0 0 18 0V8"/>
+            <circle cx="15" cy="8" r="2.4"/>
+            <circle cx="33" cy="8" r="2.4"/>
+            <path d="M24 28v6a8 8 0 0 0 16 0"/>
+            <circle cx="40" cy="34" r="4"/>
+          </svg>
+        </div>
+        <h3>Medicina Interna</h3>
+        <p>Diagnóstico, tratamiento y seguimiento integral de la salud en adultos.</p>
+              <span class="card-more">Conocer más
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      <!-- URL DE LA PAGINA NEUROCIRUGIA -->
+      <a class="feature-card" href="neurocirugia.html">
+        <div class="card-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8c-5 0-8 4-8 8 0 2 1 3 1 3-2 2-2 6 0 8 1 1 1 3 3 4 2 1 3 0 3-2v-3c0-1 1-2 2-2h2c1 0 2 1 2 2v3c0 2 1 3 3 2 2-1 2-3 3-4 2-2 2-6 0-8 0 0 1-1 1-3 0-4-3-8-8-8-1 0-2 1-3 1s-2-1-3-1Z"/>
+            <path d="M20 12c1 1 1 3 0 4M28 12c-1 1-1 3 0 4"/>
+          </svg>
+        </div>
+        <h3>Neurocirugía</h3>
+        <p>Diagnóstico y tratamiento quirúrgico de padecimientos del cerebro y sistema nervioso.</p>
+              <span class="card-more">Conocer más
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      <!-- URL DE LA PAGINA ODONTOLOGIA -->
+      <a class="feature-card" href="odontologia.html">
+        <div class="card-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M24 9c-6 0-11 3-11 9 0 3 1 5 1 5-1 4-1 9 1 14 1 3 2 5 4 5 3 0 2-9 5-9s2 9 5 9c2 0 3-2 4-5 2-5 2-10 1-14 0 0 1-2 1-5 0-6-5-9-11-9Z"/>
+            <path d="M18 12c2 1 4 1 6 1s4 0 6-1"/>
+          </svg>
+        </div>
+        <h3>Odontología</h3>
+        <p>Cirugía oral y maxilofacial para el tratamiento quirúrgico de tu salud bucal.</p>
+              <span class="card-more">Conocer más
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
        <!-- URL DE LA PAGINA OFTALMOLOGIA -->
       <a class="feature-card" href="oftalmologia.html">
         <div class="card-icon">
@@ -989,19 +1052,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
-       <!-- URL DE LA PAGINA UROLOGIA -->
-      <a class="feature-card" href="urologia.html">
-        <div class="card-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8c9 0 15 6 15 15a10 10 0 0 1-10 10c-2.2 0-3.3-2.3-2.1-4.2 2.1-3.3-0.1-6.8-3.4-6.8a7 7 0 0 1 0.5-14Z"/>
-          </svg>
-        </div>
-        <h3>Urología</h3>
-        <p>Diagnóstico y tratamiento de padecimientos del sistema urinario.</p>
-              <span class="card-more">Conocer más
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
        <!-- URL DE LA PAGINA PEDIATRIA -->
       <a class="feature-card" href="pediatria-neonatologia.html">
         <div class="card-icon">
@@ -1013,36 +1063,6 @@
         </div>
         <h3>Pediatría y Neonatología</h3>
         <p>Cuidado integral de la salud de bebés, niños y adolescentes en cada etapa de su crecimiento.</p>
-              <span class="card-more">Conocer más
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-        <!-- URL DE LA PAGINA GINECOLOGIA -->
-      <a class="feature-card" href="ginecologia-obstetricia.html">
-        <div class="card-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="24" cy="17" r="10"/>
-            <path d="M24 27v13"/>
-            <path d="M17 34h14"/>
-          </svg>
-        </div>
-        <h3>Ginecología y Obstetricia</h3>
-        <p>Acompañamiento cercano en la salud femenina, el embarazo y el parto.</p>
-              <span class="card-more">Conocer más
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-        <!-- URL DE LA PAGINA CIRUGIA GENERAL -->
-      <a class="feature-card" href="cirugia-general.html">
-        <div class="card-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 36 26 22"/>
-            <path d="M26 22 34 14a3 3 0 0 1 4 4l-8 8"/>
-            <circle cx="12" cy="36" r="3"/>
-          </svg>
-        </div>
-        <h3>Cirugía General</h3>
-        <p>Procedimientos quirúrgicos con técnicas mínimamente invasivas y recuperación más rápida.</p>
               <span class="card-more">Conocer más
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
@@ -1066,51 +1086,29 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
-
-      <!-- URL DE LA PAGINA MED INTERNA -->
-      <a class="feature-card" href="medicina-interna.html">
+       <!-- URL DE LA PAGINA URGENCIAS -->
+      <a class="feature-card" href="urgencias.html">
         <div class="card-icon">
           <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 8v11a9 9 0 0 0 18 0V8"/>
-            <circle cx="15" cy="8" r="2.4"/>
-            <circle cx="33" cy="8" r="2.4"/>
-            <path d="M24 28v6a8 8 0 0 0 16 0"/>
-            <circle cx="40" cy="34" r="4"/>
+            <circle cx="24" cy="24" r="18"/>
+            <path d="M24 14v20M14 24h20"/>
           </svg>
         </div>
-        <h3>Medicina Interna</h3>
-        <p>Diagnóstico, tratamiento y seguimiento integral de la salud en adultos.</p>
+        <h3>Urgencias</h3>
+        <p>Atención médica inmediata las 24 horas, los 365 días del año.</p>
               <span class="card-more">Conocer más
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
-
-      <!-- URL DE LA PAGINA ODONTOLOGIA -->
-      <a class="feature-card" href="odontologia.html">
+       <!-- URL DE LA PAGINA UROLOGIA -->
+      <a class="feature-card" href="urologia.html">
         <div class="card-icon">
           <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M24 9c-6 0-11 3-11 9 0 3 1 5 1 5-1 4-1 9 1 14 1 3 2 5 4 5 3 0 2-9 5-9s2 9 5 9c2 0 3-2 4-5 2-5 2-10 1-14 0 0 1-2 1-5 0-6-5-9-11-9Z"/>
-            <path d="M18 12c2 1 4 1 6 1s4 0 6-1"/>
+            <path d="M18 8c9 0 15 6 15 15a10 10 0 0 1-10 10c-2.2 0-3.3-2.3-2.1-4.2 2.1-3.3-0.1-6.8-3.4-6.8a7 7 0 0 1 0.5-14Z"/>
           </svg>
         </div>
-        <h3>Odontología</h3>
-        <p>Cirugía oral y maxilofacial para el tratamiento quirúrgico de tu salud bucal.</p>
-              <span class="card-more">Conocer más
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </span>
-      </a>
-
-      <!-- URL DE LA PAGINA LABORATORIO -->
-      <a class="feature-card" href="laboratorio.html">
-        <div class="card-icon">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 6h10"/>
-            <path d="M21 6v12L10 34a5 5 0 0 0 4.3 8h19.4a5 5 0 0 0 4.3-8L27 18V6"/>
-            <path d="M15 28h18"/>
-          </svg>
-        </div>
-        <h3>Laboratorio Clínico</h3>
-        <p>Estudios de laboratorio con resultados confiables y entrega oportuna.</p>
+        <h3>Urología</h3>
+        <p>Diagnóstico y tratamiento de padecimientos del sistema urinario.</p>
               <span class="card-more">Conocer más
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
@@ -1324,19 +1322,20 @@
         <div class="field">
           <label for="especialidad">Especialidad de interés</label>
           <select id="especialidad" name="especialidad">
-            <option>Urgencias</option>
-            <option>Medicina General</option>
             <option>Angiología</option>
             <option>Cirugía General</option>
             <option>Cirugía Plástica</option>
             <option>Endoscopia / Colonoscopia</option>
             <option>Ginecología y Obstetricia</option>
+            <option>Medicina General</option>
             <option>Medicina Interna</option>
+            <option>Neurocirugía</option>
             <option>Odontología</option>
             <option>Oftalmología</option>
             <option>Otorrinolaringología</option>
             <option>Pediatría / Neonatología</option>
             <option>Traumatología y Ortopedia</option>
+            <option>Urgencias</option>
             <option>Urología</option>
             <option>Otra</option>
           </select>
