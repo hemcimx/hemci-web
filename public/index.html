@@ -334,19 +334,21 @@
      !important is needed on opacity/transform because the scroll entrance animation
      (GSAP) leaves those two properties set as inline styles, which otherwise outrank
      any stylesheet rule regardless of selector specificity. */
-  .card-grid.is-interacting .feature-card{
-    filter:blur(3px);
-    opacity:.45 !important;
-    transform:translateY(0) scale(.96) !important;
-  }
-  .card-grid.is-interacting .feature-card.is-focused{
-    filter:none;
-    opacity:1 !important;
-    transform:translateY(0) scale(1.03) !important;
-    z-index:2;
-    border-color:transparent;
-    background:linear-gradient(150deg, var(--blue), var(--blue-dark));
-    box-shadow:0 26px 50px -18px rgba(1,79,184,.55);
+  @media (hover: hover) and (pointer: fine){
+    .card-grid.is-interacting .feature-card{
+      filter:blur(3px);
+      opacity:.45 !important;
+      transform:translateY(0) scale(.96) !important;
+    }
+    .card-grid.is-interacting .feature-card.is-focused{
+      filter:none;
+      opacity:1 !important;
+      transform:translateY(0) scale(1.03) !important;
+      z-index:2;
+      border-color:transparent;
+      background:linear-gradient(150deg, var(--blue), var(--blue-dark));
+      box-shadow:0 26px 50px -18px rgba(1,79,184,.55);
+    }
   }
 
   .card-icon{
@@ -362,13 +364,17 @@
   }
   .card-icon svg{ width:21px; height:21px; }
 
-  .feature-card.is-focused .card-icon{ background:var(--white); color:var(--blue); }
+  @media (hover: hover) and (pointer: fine){
+    .feature-card.is-focused .card-icon{ background:var(--white); color:var(--blue); }
+  }
 
   .feature-card h3{ font-size:1rem; margin-bottom:.45rem; transition:color .35s ease; }
   .feature-card p{ color:var(--text-dim); font-size:.83rem; line-height:1.5; transition:color .35s ease; }
 
-  .feature-card.is-focused h3{ color:var(--white); }
-  .feature-card.is-focused p{ color:rgba(255,255,255,.88); }
+  @media (hover: hover) and (pointer: fine){
+    .feature-card.is-focused h3{ color:var(--white); }
+    .feature-card.is-focused p{ color:rgba(255,255,255,.88); }
+  }
 
   .card-more{
     display:inline-flex;
@@ -383,7 +389,9 @@
     transition:opacity .3s ease, transform .3s ease;
   }
   .card-more svg{ width:15px; height:15px; }
-  .feature-card.is-focused .card-more{ opacity:1; transform:translateX(0); }
+  @media (hover: hover) and (pointer: fine){
+    .feature-card.is-focused .card-more{ opacity:1; transform:translateX(0); }
+  }
 
   /* ---------- TU EXPERIENCIA (horizontal scroll) ---------- */
   .timeline-section{ background:var(--bg-deep); }
@@ -1454,20 +1462,41 @@
     /* ---------- ESPECIALIDADES: spotlight hover effect ---------- */
     const cardGrid = document.querySelector('.card-grid');
     const featureCards = document.querySelectorAll('.feature-card');
-    featureCards.forEach((card) => {
-      const focus = () => {
-        cardGrid.classList.add('is-interacting');
-        featureCards.forEach((c) => c.classList.toggle('is-focused', c === card));
-      };
-      const blur = () => {
-        cardGrid.classList.remove('is-interacting');
-        featureCards.forEach((c) => c.classList.remove('is-focused'));
-      };
-      card.addEventListener('mouseenter', focus);
-      card.addEventListener('mouseleave', blur);
-      card.addEventListener('focus', focus);
-      card.addEventListener('blur', blur);
+    const clearSpotlight = () => {
+      if(!cardGrid) return;
+      cardGrid.classList.remove('is-interacting');
+      featureCards.forEach((c) => c.classList.remove('is-focused'));
+    };
+
+    /* El spotlight solo tiene sentido con un cursor real. En pantallas táctiles el
+       navegador emula mouseenter/focus al tocar la tarjeta, pero nunca dispara
+       mouseleave, así que al volver con el botón "atrás" el resto de tarjetas se
+       quedaban borrosas y atenuadas. */
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    const bindSpotlight = () => {
+      featureCards.forEach((card) => {
+        const focus = () => {
+          if(!canHover.matches) return;
+          cardGrid.classList.add('is-interacting');
+          featureCards.forEach((c) => c.classList.toggle('is-focused', c === card));
+        };
+        card.addEventListener('mouseenter', focus);
+        card.addEventListener('mouseleave', clearSpotlight);
+        card.addEventListener('focus', focus);
+        card.addEventListener('blur', clearSpotlight);
+      });
+    };
+    if(cardGrid) bindSpotlight();
+
+    /* Al regresar desde una página de especialidad el navegador puede restaurar la
+       página desde la bfcache con el DOM tal cual quedó: limpiamos el estado. */
+    window.addEventListener('pageshow', clearSpotlight);
+    window.addEventListener('pagehide', clearSpotlight);
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible') clearSpotlight();
     });
+    if(canHover.addEventListener) canHover.addEventListener('change', clearSpotlight);
 
     /* ---------- TU EXPERIENCIA: navegación con flechas ---------- */
     const track = document.querySelector('.timeline-track');
